@@ -35,3 +35,6 @@ typer==0.15.4
 typing_extensions==4.13.2
 urllib3==2.4.0
 whisper==1.1.10
+llama-index>=0.10.0
+llama-index-embeddings-huggingface>=0.1.0
+pathlib>=1.0.1

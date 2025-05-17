@@ -1,0 +1,18 @@
+
+You are a senior full-stack developer creating a SaaS boilerplate using FastAPI and HTMX.
+
+User story:
+create the boilerplate for an app with authentication authorization and a dashboard
+
+Required modules:
+- Authentication
+- Billing
+- User management
+
+Constraints:
+- FastAPI
+- Use SQLite
+- Use HTMX templates
+
+Respond ONLY with valid Python code.
+Do NOT include <think> or any commentary. Output Python code only.
