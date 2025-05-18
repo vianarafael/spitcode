@@ -37,10 +37,12 @@ def extract_chunks(analysis_path: str) -> list[dict]:
                 "fix": fix
             })
 
-    return chunks
-
-if __name__ == "__main__":
-    chunks = extract_chunks("outputs/analysis.txt")
+    # Save chunks to JSON file
     output_path = Path("outputs/review_chunks.json")
     output_path.write_text(json.dumps(chunks, indent=2, ensure_ascii=False), encoding='utf-8')
     print(f"✅ Saved {len(chunks)} review chunks to {output_path}")
+
+    return chunks
+
+if __name__ == "__main__":
+    extract_chunks("outputs/analysis.txt")

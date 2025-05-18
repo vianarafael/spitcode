@@ -1,1 +1,1 @@
-create the boilerplate for an app with authentication authorization and a dashboard
+ to do app with logging the lists and a dashboard.

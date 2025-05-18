@@ -25,15 +25,29 @@ MODEL_NAME = "qwen3:14b-q4_K_M"
 
 def extract_code_blocks(llm_output: str) -> str:
     """Extract Python code from markdown blocks or fallback to full text."""
+    # First remove any think tags
     clean = strip_think_tags(llm_output)
-    code_blocks = re.findall(r"```python\n(.*?)```", clean, re.DOTALL)
-    if code_blocks:
-        return "\n\n".join(code_blocks).strip()
-    return clean.strip()  # fallback to raw text if no block found
+    
+    # Remove any markdown code block markers
+    clean = re.sub(r"```python\n?", "", clean)
+    clean = re.sub(r"```\n?", "", clean)
+    
+    # Remove any remaining markdown formatting
+    clean = re.sub(r"`.*?`", "", clean)
+    
+    # Remove any leading/trailing whitespace and normalize newlines
+    clean = clean.strip()
+    clean = re.sub(r'\n{3,}', '\n\n', clean)
+    
+    return clean
 
 def strip_think_tags(text: str) -> str:
-    """Remove <think>...</think> blocks"""
-    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+    """Remove <think>...</think> blocks and any other XML-like tags"""
+    # Remove think tags
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    # Remove any other XML-like tags
+    text = re.sub(r"<[^>]+>", "", text)
+    return text.strip()
 
 def apply_fixes(code: str, chunks: list[dict]) -> str:
     fixes_summary = "\n".join(
@@ -98,7 +112,6 @@ def apply_fixes(code: str, chunks: list[dict]) -> str:
     )
 
     result = response.json()
-    print(result)
     if "error" in result:
         raise Exception(f"Ollama API error: {result['error']}")
     if "message" not in result or "content" not in result["message"]:
@@ -109,8 +122,14 @@ def apply_fixes(code: str, chunks: list[dict]) -> str:
 def main():
     original_code = load_code()
     review_chunks = load_chunks()
-    raw_output  = apply_fixes(original_code, review_chunks)
-    clean_output = extract_code_blocks(strip_think_tags(raw_output))
+    raw_output = apply_fixes(original_code, review_chunks)
+    clean_output = extract_code_blocks(raw_output)
+    
+    # Additional final cleaning
+    clean_output = re.sub(r'^\s*#.*$', '', clean_output, flags=re.MULTILINE)  # Remove comments
+    clean_output = re.sub(r'\n{3,}', '\n\n', clean_output)  # Normalize newlines
+    clean_output = clean_output.strip()
+    
     REWRITTEN_PATH.write_text(clean_output, encoding="utf-8")
     print(f"✅ Rewritten file saved to {REWRITTEN_PATH}")
 
