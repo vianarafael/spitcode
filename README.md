@@ -80,7 +80,7 @@ Spitcode will generate:
 
 ## 🧬 Architecture
 
-* **Local LLM**: Uses [Qwen](https://huggingface.co/Qwen/Qwen1.5-14B-Chat) via Ollama
+* **Local LLM**: Uses [Qwen](https://huggingface.co/NikolayKozloff/Qwen3-14B-Q4_K_M-GGUF) via Ollama
 * **Voice Input**: Whisper + FFmpeg
 * **Analysis**: RAG with your local analyzer
 * **Improvement**: Prompt-based refactor with safety guards
